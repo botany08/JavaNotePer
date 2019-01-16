@@ -1,0 +1,5 @@
+1.新建Maven项目，SpringBoot属于Maven项目。
+2.需要pom.xml配置文件，下载依赖的jar包，以及父依赖。
+   application.properties配置文件属于属性配置文件，根据需要进行配置。
+3.启动入口：启动类，注解@SpringBootApplication
+4.访问入口：控制类，注解@RestController（类入口）和@RequestMapping（方法入口）

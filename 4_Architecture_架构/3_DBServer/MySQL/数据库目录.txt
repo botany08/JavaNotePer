@@ -1,0 +1,33 @@
+1、操作数据库 
+   Create、Show、Alter、Drop
+2、操作数据表 -- 表结构
+   INSERT插入数据，
+   SELECT查询数据，
+   ALTER...ADD添加列
+   ALTER...DROP删除列
+   ALTER...MODIFY修改列定义
+   ALTER...CHANGE修改列名称
+   ALTER...RENAME修改表名称
+3、操作数据表的记录
+   INSERT向表中插入数据
+   UPDATE...SET单表更新
+   DELETE..WHERE单表删除
+   SELECT...FROM查询数据
+   AS...别名
+   WHERE...条件表达式
+   GROUP BY...查询结果分组
+   HAVING..分组条件
+   ORDER BY...结果排序
+   LIMIT...限制查询结果
+
+4、子查询
+   NOT IN、IN...查询的条件
+   EXIST..查询的返回值
+
+5、连接...多表连接相当于非物理外键
+   ON...设置连接条件
+   INNER JOIN内连接...类似一直取AB表交集
+   LEFT JOIN左外连接...只显示左表的内容
+   RIGHT JOIN右外连接...只显示右表的内容
+   ----多表更新，多表查询，多表删除
+   

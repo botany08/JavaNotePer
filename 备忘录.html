@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<script src= "http://cdn.bootcss.com/angular.js/1.4.6/angular.min.js"></script>
+<body ng-app="myApp" ng-controller="todoCtrl">
+
+	<h2>我的备忘录</h2>
+
+	<form ng-submit="todoAdd()"><!--提交后调用todoAdd()方法-->
+		<input type="text" ng-model="todoInput" size="50" placeholder="新增"><!--文本框绑定到应用里todoInput变量-->
+		<input type="submit" value="新增"><!--提交按钮-->
+	</form>
+
+	<br>
+
+	<div ng-repeat="x in todoList" re><!--循环读取todoList中的元素--><!--在网页中显示-->
+		<input type="checkbox" ng-model="x.done"> <span ng-bind="x.todoText"></span>
+		<!--复选框绑定到x.done变量值-->
+		<!--利用bind指令读取应用程序内todoText中的值-->
+	</div>
+
+	<p><button ng-click="remove()">删除记录</button></p><!--调用remove()方法删除-->
+
+
+	<script>
+		var app = angular.module("myApp",[]);
+		app.controller("todoCtrl",function($scope){
+			$scope.todoList=[{todoText:'Clean House',done:false}];
+			
+			$scope.todoAdd=function(){
+				$scope.todoList.push({todoText:$scope.todoInput,done:false});
+				$scope.todoInput="";
+				}
+				
+			$scope.remove=function(){
+				var oldList=$scope.todoList;
+				$scope.todoList=[];
+				angular.forEach(oldList,function(x){
+					if(!x.done) $scope.todoList.push(x);
+				})
+				
+				}
+		})
+
+		app.directive('re', function () {
+			//对象data，方法（属性）link
+			return {
+				link: function (scope) {
+					//用scope.$last == true 来判断 ng-repeat 是否完成
+					if (scope.$last == true) {
+						//回调函数
+						alert("repeat完成！");
+					}
+				}
+			};
+		 
+		});
+	</script>
+</body>
+</html>

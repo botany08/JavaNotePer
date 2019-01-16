@@ -1,0 +1,58 @@
+<!--发现依赖和扩展的远程仓库列表。 -->  
+<repositories>  
+  
+    <!--包含需要连接到远程仓库的信息 -->  
+    <repository>  
+  
+        <!--如何处理远程仓库里发布版本的下载 -->  
+        <releases>  
+  
+            <!--true或者false表示该仓库是否为下载某种类型构件（发布版，快照版）开启。 -->  
+            <enabled />  
+  
+            <!--该元素指定更新发生的频率。Maven会比较本地POM和远程POM的时间戳。 -->  
+            <!--这里的选项是：always（一直），daily（默认，每日）， -->  
+            <!--interval：X（这里X是以分钟为单位的时间间隔），或者never（从不）。 -->  
+            <updatePolicy />  
+  
+            <!--当Maven验证构件校验文件失败时该怎么做： -->  
+            <!--ignore（忽略），fail（失败），或者warn（警告）。 -->  
+            <checksumPolicy />  
+  
+        </releases>  
+  
+        <!--如何处理远程仓库里快照版本的下载。有了releases和snapshots这两组配置， -->  
+        <!--POM就可以在每个单独的仓库中，为每种类型的构件采取不同的策略。 -->  
+        <!--例如，可能有人会决定只为开发目的开启对快照版本下载的支持 -->  
+        <snapshots>  
+            <enabled />  
+            <updatePolicy />  
+            <checksumPolicy />  
+        </snapshots>  
+  
+        <!--远程仓库唯一标识符。可以用来匹配在settings.xml文件里配置的远程仓库 -->  
+        <id> repo-id </id>  
+  
+        <!--远程仓库名称 -->  
+        <name> repo-name</name>  
+  
+        <!--远程仓库URL，按protocol://hostname/path形式 -->  
+        <url>http://192.168.1.169:9999/repository/ </url>  
+  
+        <!--用于定位和排序构件的仓库布局类型-可以是default（默认）或者legacy（遗留）。 -->  
+        <!--Maven 2为其仓库提供了一个默认的布局； -->  
+        <!--然而，Maven1.x有一种不同的布局。 -->  
+        <!--我们可以使用该元素指定布局是default（默认）还是legacy（遗留）。 -->  
+        <layout> default</layout>  
+  
+    </repository>  
+  
+</repositories>  
+  
+<!--发现插件的远程仓库列表，这些插件用于构建和报表 -->  
+<pluginRepositories>  
+  
+    <!--包含需要连接到远程插件仓库的信息.参见repositories/repository元素 -->  
+    <pluginRepository />  
+  
+</pluginRepositories>  

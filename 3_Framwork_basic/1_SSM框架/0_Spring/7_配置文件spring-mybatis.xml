@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    	xmlns="http://www.springframework.org/schema/beans"
+    	xmlns:context="http://www.springframework.org/schema/context"
+    	xmlns:tx="http://www.springframework.org/schema/tx"
+    	xmlns:aop="http://www.springframework.org/schema/aop"
+    	xsi:schemaLocation="
+    	http://www.springframework.org/schema/beans 
+    	http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+    	http://www.springframework.org/schema/context 
+    	http://www.springframework.org/schema/context/spring-context-4.2.xsd  
+    	http://www.springframework.org/schema/jdbc 
+    	http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd
+    	http://www.springframework.org/schema/tx 
+    	http://www.springframework.org/schema/tx/spring-tx-4.2.xsd  
+    	http://www.springframework.org/schema/aop 
+    	http://www.springframework.org/schema/aop/spring-aop-4.2.xsd">
+
+  	<!-- 注解配置 -->
+    <tx:annotation-driven transaction-manager="transactionManager" />
+    <context:annotation-config />
+    
+    <!-- 注解扫描包 @Repository @Service @Controller @Component-->
+    <context:component-scan base-package="com.lin.springDemo" />
+    
+	<!-- 是否开启cglib代理，默认为JDK动态代理-->
+	<aop:config proxy-target-class="true"/>
+
+    <!-- 数据库连接池,这里使用alibaba的Druid -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="url" value="jdbc:mysql://localhost:3306/pracmy?characterEncoding=utf-8&amp;useSSL=true" />  
+        <property name="username" value="root" />  
+        <property name="password" value="root" />  
+    </bean>
+ 	
+ 	<!-- Mybatis sql工厂对象 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation" value="classpath:configuration.xml" />
+        <property name="mapperLocations" value="com/lin/springDemo/mysqlMapper/*.xml" />
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    
+    <!-- DAO接口所在包名，Spring会自动查找其下的类 ,包下的类需要使用@MapperScan注解,否则容器注入会失败 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.lin.springDemo.mysqlMapper" />
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+    </bean>
+    
+    <!-- 事务管理器 --> 
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="dataSource" />  
+    </bean> 
+</beans>  
+
+<!-- spring全部的xml开头
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    <span style="white-space:pre">	</span>xmlns:context="http://www.springframework.org/schema/context"
+    <span style="white-space:pre">	</span>xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    <span style="white-space:pre">	</span>xmlns:aop="http://www.springframework.org/schema/aop"
+    <span style="white-space:pre">	</span>xmlns:mvc="http://www.springframework.org/schema/mvc"
+    <span style="white-space:pre">	</span>xmlns:jee="http://www.springframework.org/schema/jee"
+    <span style="white-space:pre">	</span>xmlns:tx="http://www.springframework.org/schema/tx"
+    <span style="white-space:pre">	</span>xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+ 		
+ -->

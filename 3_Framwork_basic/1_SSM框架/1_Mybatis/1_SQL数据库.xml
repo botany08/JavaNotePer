@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 命名空间，用来对应接口类，可以自动找到相应的接口类 -->
+<mapper namespace="com.parctice.mybat.mapxml.Pracmy">   
+    <!-- 对象映射，可以不写 -->
+    <!-- 查询功能，resultType 设置返回值类型 -->
+    <!-- id名对应类中的接口名 -->
+    <!-- resultType 返回的是集合中的元素类型，而不是集合本身 -->
+    <select id="selectAll" resultType="java.util.Map">  <!-- 书写 SQL 语句 -->
+        SELECT * FROM student
+    </select>
+    
+    <select id="selectAllName" resultType="java.lang.String">  <!-- 书写 SQL 语句 -->
+        SELECT name FROM student
+    </select>
+</mapper>

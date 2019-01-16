@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="3.1" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+		xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+		http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" >
+  <display-name>SpringMVC PracticeDemo</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>/view/index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+
+  <!-- 配置SpringMVC -->
+  <!-- 前端控制器 -->
+  <servlet>
+    <servlet-name>spmvc</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <!-- 加载/WEB-INF/[servlet-name]-servlet.xml -->
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>spmvc</servlet-name>
+   <!-- 拦截后缀为 .jsp请求的url 或所有类型的文件，跳转到spmvc-servlet.xml进行解析 -->
+   <!-- 把  *.jsp  改成  / 后，表示默认的servlet为DispatcherServlet，如果不改则表示index，jsp为要处理是servlet-->
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+
+
+</web-app>

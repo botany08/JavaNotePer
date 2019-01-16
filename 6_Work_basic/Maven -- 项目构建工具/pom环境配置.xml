@@ -1,0 +1,52 @@
+<!--项目的问题管理系统(Bugzilla, Jira, Scarab,或任何你喜欢的问题管理系统)的名称和URL，本例为 jira -->  
+<issueManagement>  
+  
+    <!--问题管理系统（例如jira）的名字， -->  
+    <system> jira </system>  
+  
+    <!--该项目使用的问题管理系统的URL -->  
+    <url> http://jira.clf.com/</url>  
+  
+</issueManagement>  
+  
+<!--项目持续集成信息 -->  
+<ciManagement>  
+  
+    <!--持续集成系统的名字，例如continuum -->  
+    <system />  
+  
+    <!--该项目使用的持续集成系统的URL（如果持续集成系统有web接口的话）。 -->  
+    <url />  
+  
+    <!--构建完成时，需要通知的开发者/用户的配置项。包括被通知者信息和通知条件（错误，失败，成功，警告） -->  
+    <notifiers>  
+  
+        <!--配置一种方式，当构建中断时，以该方式通知用户/开发者 -->  
+        <notifier>  
+  
+            <!--传送通知的途径 -->  
+            <type />  
+  
+            <!--发生错误时是否通知 -->  
+            <sendOnError />  
+  
+            <!--构建失败时是否通知 -->  
+            <sendOnFailure />  
+  
+            <!--构建成功时是否通知 -->  
+            <sendOnSuccess />  
+  
+            <!--发生警告时是否通知 -->  
+            <sendOnWarning />  
+  
+            <!--不赞成使用。通知发送到哪里 -->  
+            <address />  
+  
+            <!--扩展配置项 -->  
+            <configuration />  
+  
+        </notifier>  
+  
+    </notifiers>  
+  
+</ciManagement>  

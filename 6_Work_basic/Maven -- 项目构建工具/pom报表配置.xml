@@ -1,0 +1,54 @@
+<!--描述使用报表插件产生报表的规范,特定的maven 插件能输出相应的定制和配置报表. -->  
+<!--当用户执行“mvn site”，这些报表就会运行,在页面导航栏能看到所有报表的链接。 -->  
+<reporting>  
+  
+    <!--true，则网站不包括默认的报表。这包括“项目信息”菜单中的报表。 -->  
+    <excludeDefaults />  
+  
+    <!--所有产生的报表存放到哪里。默认值是${project.build.directory}/site。 -->  
+    <outputDirectory />  
+  
+    <!--使用的报表插件和他们的配置。 -->  
+    <plugins>  
+  
+        <plugin>  
+            <groupId />  
+            <artifactId />  
+            <version />  
+            <inherited />  
+            <configuration>  
+                <links>  
+                    <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>  
+                </links>  
+            </configuration>  
+            <!--一组报表的多重规范，每个规范可能有不同的配置。 -->  
+            <!--一个规范（报表集）对应一个执行目标 。例如，有1，2，3，4，5，6，7，8，9个报表。 -->  
+            <!--1，2，5构成A报表集，对应一个执行目标。2，5，8构成B报表集，对应另一个执行目标 -->  
+            <reportSets>  
+  
+                <!--表示报表的一个集合，以及产生该集合的配置 -->  
+                <reportSet>  
+  
+                    <!--报表集合的唯一标识符，POM继承时用到 -->  
+                    <id>sunlink</id>  
+  
+                    <!--产生报表集合时，被使用的报表的配置 -->  
+                    <configuration />  
+  
+                    <!--配置是否被继承到子POMs -->  
+                    <inherited />  
+  
+                    <!--这个集合里使用到哪些报表 -->  
+                    <reports>  
+                        <report>javadoc</report>  
+                    </reports>  
+  
+                </reportSet>  
+  
+            </reportSets>  
+  
+        </plugin>  
+  
+    </plugins>  
+  
+</reporting>     
