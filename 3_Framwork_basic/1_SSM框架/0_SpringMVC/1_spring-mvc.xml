@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+
+    <!-- 使用注解方式完成映射 -->
+    <!-- 自动扫描这个包下所有带有spring组件注解的类 -->
+    <context:component-scan base-package="com.monster.lin.mvc.person" />
+
+
+    <!-- 开启注解 -->
+     <mvc:annotation-driven>
+         <!-- 载入json处理类，将结果转换为json字符串 -->
+         <mvc:message-converters>
+             <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+             <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                 <property name="supportedMediaTypes">
+                     <list>
+                         <value>text/html;charset=UTF-8</value>
+                         <value>application/json;charset=UTF-8</value>
+                         <value>application/xml;charset=UTF-8</value>
+                     </list>
+                 </property>
+             </bean>
+         </mvc:message-converters>
+     </mvc:annotation-driven>
+
+
+
+
+
+    <!-- 视图解析器 如果不需要返回页面也可以不配置视图解析器。
+         假设控制器返回 success 字符串，该视图解析器将自动进行装配，具体的视图将为：
+         prefix + 返回的字符串 + suffix = /WEB-INF/views/success.jsp
+    -->
+    <bean
+        class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- prefix表示前缀 -->
+        <property name="prefix" value="/WEB-INF/view/" />
+        <!-- suffix表示后缀 -->
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+</beans>
+
+
+ 
