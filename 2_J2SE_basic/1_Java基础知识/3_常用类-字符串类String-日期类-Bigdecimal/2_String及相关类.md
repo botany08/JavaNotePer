@@ -19,7 +19,7 @@
 
 new String(“hello”) 生成了两个对象。在编译期，“heelo”在字符串常量池生成了一个string对象，假设引用为A1。在运行期，在堆中生成了一个string对象，再将指针指向了“hello”，假设引用为A2。此时A1 不等于 A2。
 
-![](https://github.com/Monster522/ImageBed/blob/master/2_c2899ac9-e7e7-429d-93ad-0caef098d76b.png?raw=true)
+![](https://javanote.oss-cn-shenzhen.aliyuncs.com/2_c2899ac9-e7e7-429d-93ad-0caef098d76b.png)
 
 ```java
 String str1 = "hello";				    //str1直接指向“hello”

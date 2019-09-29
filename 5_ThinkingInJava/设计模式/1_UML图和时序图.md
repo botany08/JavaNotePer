@@ -6,7 +6,7 @@
 
 ### 2.UML实例图
 
-![](https://github.com/Monster522/ImageBed/blob/master/4_ad787052-e069-4da7-9ef4-0c35d81b46fd.jpg?raw=true)
+![](https://javanote.oss-cn-shenzhen.aliyuncs.com/4_ad787052-e069-4da7-9ef4-0c35d81b46fd.jpg)
 
 - 车的类图结构为 <<abstract>>，表示车是一个抽象类。
 - 车有两个继承类：小汽车和自行车。它们之间的关系为**实现关系**，使用**带空心箭头的虚线**表示。
@@ -138,7 +138,7 @@ public class A {
 
 时序图包括四个元素 对象(Object), 生命线(Lifeline), 激活(Activation), 消息(Message);
 
-![](https://github.com/Monster522/ImageBed/blob/master/5_39b80c1c-22bd-4ef2-afb0-e9583b7d6c45.jpg?raw=true)
+![](https://javanote.oss-cn-shenzhen.aliyuncs.com/5_39b80c1c-22bd-4ef2-afb0-e9583b7d6c45.jpg)
 
 1. 对象(Object)
 - 符号表示：时序图中的对象与对象图中的表示方法一样, **使用矩形将对象名称包含起来, 并且对象名称下有下划线**。
