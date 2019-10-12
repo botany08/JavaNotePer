@@ -235,14 +235,14 @@ public boolean equalsIgnoreCase(String anotherString); // 忽略大小写
 
 ```java
 // StringBuffer对方法加了同步锁或者对调用的方法加了同步锁，所以是线程安全的 
-public  synchronized  StringBuffer reverse() {
-    super .reverse();
-    return   this ;
+public synchronized StringBuffer reverse() {
+    super.reverse();
+    return this ;
 }
 
-public   int  indexOf(String str) {
+public int indexOf(String str) {
     // 存在 public synchronized int indexOf(String str, int fromIndex) 方法
-    return  indexOf(str, 0);           
+    return indexOf(str, 0);           
 }
 
 // StringBuilder并没有对方法进行加同步锁，所以是 非线程安全的 。
