@@ -344,60 +344,140 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,boolean evict) {
 
 ### 3.扩容机制
 
-#### 3.1JDK1.7的扩容方法  
+#### 3.1JDK1.8的扩容方法  
 
 ```java
+/**
+* 散列表(哈希表)扩容
+**/
 final Node<K,V>[] resize() {
+    // 旧散列表数组
     Node<K,V>[] oldTab = table;
+    // 旧散列表数组长度
     int oldCap = (oldTab == null) ? 0 : oldTab.length;
+    // 阈值
     int oldThr = threshold;
     int newCap, newThr = 0;
+    
+    // 当数组长度 大于0
     if (oldCap > 0) {
+        // static final int MAXIMUM_CAPACITY = 1 << 30; 数组最大长度 2^30
         if (oldCap >= MAXIMUM_CAPACITY) {
+            // 当旧数组长度已经达到最大值,则将阈值提高到最大值[ 2^31-1 ],不再扩容返回旧数组
             threshold = Integer.MAX_VALUE;
             return oldTab;
         }
-        else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
-                 oldCap >= DEFAULT_INITIAL_CAPACITY)
-            newThr = oldThr << 1; // double threshold
+        /**
+        * static final int DEFAULT_INITIAL_CAPACITY = 1 << 4; // 数组默认长度为 2^4[16]
+        * static final int MAXIMUM_CAPACITY = 1 << 30; // 最大长度为 2^30
+        * (newCap = oldCap << 1)：新容量为旧容量向左移动一位2^(n+1),同时新容量小于最大容量,旧容量大于默认
+        *                         容量。
+        **/
+        else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY && oldCap >= DEFAULT_INITIAL_CAPACITY)
+            // 阈值：新阈值等于旧阈值向左移动一位
+            newThr = oldThr << 1; 
     }
-    else if (oldThr > 0) // initial capacity was placed in threshold
+    // 数组长度为0时,当旧阈值大于0,则新容量等于旧阈值
+    else if (oldThr > 0) 
         newCap = oldThr;
-    else {               // zero initial threshold signifies using defaults
+    // 数组长度为0,旧阈值也为0时,初始容量等于默认长度2^4,初始阈值等于 0.75*16=12
+    else {               
         newCap = DEFAULT_INITIAL_CAPACITY;
         newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
     }
+    
+    // 当新阈值等于0,计算新阈值
     if (newThr == 0) {
+        // ft等于 新容量*负载因子
         float ft = (float)newCap * loadFactor;
+        // 当新容量和新阈值 都小于最大容量2^30,取ft作为新阈值
         newThr = (newCap < MAXIMUM_CAPACITY && ft < (float)MAXIMUM_CAPACITY ?
                   (int)ft : Integer.MAX_VALUE);
     }
+    
+    // HashMap的当前阈值 赋值为 新阈值
     threshold = newThr;
     @SuppressWarnings({"rawtypes","unchecked"})
+   	// newCap 新容量初始化新数组 newTap
     Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
+    // HashMap的当前散列表数组 赋值为新数组
     table = newTab;
+    
+    // 旧表不为空,表示旧表有数据,现在要把旧数据移动到新数组中
     if (oldTab != null) {
+        // 把旧bucket 移动到 新bucket
         for (int j = 0; j < oldCap; ++j) {
+
             Node<K,V> e;
+            // 当数组内元素不等于空时
             if ((e = oldTab[j]) != null) {
+                // 索引处置为空
                 oldTab[j] = null;
+
+                // 当索引的下一位为空,表示此哈希桶只有一个元素
                 if (e.next == null)
+                    // 直接取模运算将 旧元素放到新桶
                     newTab[e.hash & (newCap - 1)] = e;
+
+                // 当索引处为红黑树,执行树操作
                 else if (e instanceof TreeNode)
                     ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
-                else { // preserve order
+
+                // 当索引不为空且下一位不为空,表示此哈希桶是链表
+                else {
+
+                    // lo和hi就是low和high的意思。
+                    // low表示扩容后不变位置的链表,即原数组部分。high表示重新散列到扩容的部分。
                     Node<K,V> loHead = null, loTail = null;
                     Node<K,V> hiHead = null, hiTail = null;
                     Node<K,V> next;
+
+                    // 循环条件：索引处下一位一直不为空,就是循环整个链表
+                    // 作用：把索引处的链表拆分成两条链表,一条是不移动位置的,一条是移动了 原索引+oldCap 
                     do {
                         next = e.next;
+
+                        /**
+                        * (e.hash & oldCap)作用是判断e的hash值是否大于旧数组长度,如果大于等于则重新分配,
+                        *                       如果小于则保持不变
+                        * 例如e的hash值是88,oldCap的大小是128,扩充的话是256。
+                        * 所以无论扩充与否,这个e对数组长度取模还是88,这个位置是变不了的,所以不需要移动。
+                        * 因为数组长度oldCap永远是2的幂次方,所以只有一个比特位。
+                        * 1.当 e.hash < oldCap 的情况:
+                        *      e.hash: 14  0000 1100
+                        *      oldCap: 16  0001 0000
+                        *      两者进行 & : 0000 0000          
+                        * 这种情况是0,位置并没有改变,也就是e不移动。
+                        *
+                        * 2.当 e.hash = oldCap 的情况:
+                        *      e.hash: 16  0001 0000
+                        *      oldCap: 16  0001 0000
+                        *      两者进行 & : 0001 0000     ->     
+                        * 这种情况是16,也就是超出了oldCap的最大位置,要移动位置,新的位置是 原位置+oldCap。
+                        * 原因是该元素应该放在oldCap的位置,但是原数组只有0~oldCap-1的索引,而新数组有
+                        * 0~2*oldCap-1的索引。
+                        * 例如：e.hash = 16 原本要放在索引为 [16&15 = 0] 的位置,但是由于数组要扩充,
+                        * 所以要放到 16 % 31 = 16的位置。
+                        *     16: 0001 0000
+                        *     31: 0001 1111   
+                        *     16 & 31 = 16;   
+                        * 所以新数组的位置 16 = 原数组位置 0 + oldCap 16 = 16;
+                        *
+                        * 3.当 e.hash > oldCap 的情况:
+                        *      e.hash: 20  0001 0100
+                        *      oldCap: 16  0001 0000
+                        *      两者进行 & : 0001 0000     ->     情况同上;
+                        **/
+
+                        // 此时e不移动位置,loHead指向链表头,loTail指向链表尾。
                         if ((e.hash & oldCap) == 0) {
                             if (loTail == null)
                                 loHead = e;
                             else
-                                loTail.next = e;
+                                loTail.next = e; 
                             loTail = e;
                         }
+                        // 此时e会移动位置,hiHead指向链表头,hiTail指向链表尾。
                         else {
                             if (hiTail == null)
                                 hiHead = e;
@@ -405,11 +485,15 @@ final Node<K,V>[] resize() {
                                 hiTail.next = e;
                             hiTail = e;
                         }
-                    } while ((e = next) != null);
+                    } while ((e = next) != null); // 循环至整个链表结束
+
+                    // 原索引-不移动位置
                     if (loTail != null) {
                         loTail.next = null;
                         newTab[j] = loHead;
                     }
+
+                    // 原索引+旧数组长度 - 移动位置
                     if (hiTail != null) {
                         hiTail.next = null;
                         newTab[j + oldCap] = hiHead;
@@ -422,25 +506,424 @@ final Node<K,V>[] resize() {
 }
 ```
 
+- 散列表扩容
+  1. 扩容(resize)就是重新计算容量，向HashMap对象里不停的添加元素。
+  2. 当HashMap的散列表超过阈值时，就需要扩大数组长度。Java的数组是无法自动扩容的，只有使用一个新的数组代替已有的容量小的数组。
+  3. 数组扩容后,原本散列表的元素需要重新计算索引再插入到散列表中。
 
+- JDK1.8重建数组元素的过程
 
-#### 3.2JDK1.8对扩容机制的优化  
+  <img src="https://javanote.oss-cn-shenzhen.aliyuncs.com/10_map扩容.png" style="zoom:50%;" />
 
+  1. 如果索引处只有一个元素，则保持原样。
+  2. 如果索引处是红黑树，则交给红黑树解决。
+  3. 如果索引处是链表。判断元素是否大于旧数组长度，如果小于则不动，如果大于等于则移动到 原索引+旧数组长度的位置。会将原链表拆分成两个链表，链表元素不会倒置。
 
+- JDK1.7重建数组元素的过程
+
+  <img src="https://javanote.oss-cn-shenzhen.aliyuncs.com/11_jdk7重建数组元素.png" style="zoom: 50%;" />
+
+  1. 新建扩容后的数组对象。
+  2. 将旧数组对象中的元素全部取出，重新计算索引后插入新的数组对象中。
+  3. 重建后的数组元素，如果还处于同一个链表中，则会倒置。
+
+- 扩容与性能
+
+  1. 扩容是一个特别耗性能的操作，在初始化map时,给定估算的容量大小,避免map进行频繁的扩容。
+  2. 负载因子是可以修改的，也可以大于1，一般不要轻易修改，除非情况非常特殊。
+  3. HashMap是线程不安全的，不要在并发的环境中同时操作HashMap，建议使用ConcurrentHashMap。
 
 ### 4.线程安全
 
+在多线程使用场景中，应该尽量避免使用线程不安全的HashMap，而使用线程安全的ConcurrentHashMap。
+
+```java
+/**
+* 实例：HashMap是线程不安全的,会造成环形链表
+**/
+
+public class HashMapInfiniteLoop {
+    // 初始数组大小为2,负载因子为0.75
+	private static HashMap<Integer,String> map = new HashMap<Integer,String>(2，0.75f);  
+	public static void main(String[] args) {  
+		map.put(5， "C");  
+
+		new Thread("Thread1") {  
+		    public void run() {  
+		        map.put(7, "B");  
+		        System.out.println(map);  
+		    };  
+		}.start(); 
+
+		new Thread("Thread2") {  
+		    public void run() {  
+		    	map.put(3, "A);  
+		        System.out.println(map);  
+		    };  
+		}.start(); 
+		       
+    }  
+} 
+
+```
+
 ### 5.JDK1.8和JDK1.7性能对比 
+
+HashMap中,如果哈希算法优秀,则key会均匀的分布在数组的所有索引位置上。
+如果哈希算法比较垃圾,则会产生很多哈希碰撞,key会集中在一个桶里。
+在JDK1.7中,集中在一个链表,时间复杂度为O(n)。在JDK1.8中,集中在一个红黑树,时间复杂度为O(logn)。
+
+- 当hashcode均匀的情况下（hashCode较少重复,碰撞数小于8）
+
+  1.7和1.8都使用链表,性能差不多。
+
+- 当hashcode不均匀的情况下（hashCode较多重复,碰撞数大于等于8）
+
+  1.8引入红黑树替换链表,性能提升明显。
 
 ## 具体方法实现
 
 ### 1.主要属性
 
+```java
+// 默认的初始容量 2^4
+static final int DEFAULT_INITIAL_CAPACITY = 1 << 4;  	
+
+// 最大的容量 2^30
+static final int MAXIMUM_CAPACITY = 1 << 30;	 	
+
+// 默认的加载因子
+static final float DEFAULT_LOAD_FACTOR = 0.75f; 		
+
+// 实际内存存储的数组 表示哈希桶(散列表)索引量，Entry类型数组
+transient  Node<K,V>[]  table; 
+
+// 实际存储键值对的长度	
+transient int size;   		  
+
+// 阈值,散列表中最大存储的索引数量,由 数组长度*负载因子 得到
+int threshold;  
+
+// 加载因子，默认为0.75
+final float loadFactor;
+```
+
 ### 2.构造方法
+
+```java
+/**
+* 默认无参构造器：初始化负载因子,未初始化哈希表
+**/
+public HashMap() {
+    // static final float DEFAULT_LOAD_FACTOR = 0.75f;
+    this.loadFactor = DEFAULT_LOAD_FACTOR; 
+}
+
+/**
+* initialCapacity：指定容量大小
+**/
+public HashMap(int initialCapacity) {
+    this(initialCapacity, DEFAULT_LOAD_FACTOR);
+}
+
+/**
+* initialCapacity：指定容量大小,指定负载因子大小
+**/
+public HashMap(int initialCapacity, float loadFactor) {
+    // 容量小于0,报错
+    if (initialCapacity < 0)
+        throw new IllegalArgumentException("Illegal initial capacity: " + initialCapacity);
+    
+    // 容量大于最大容量,则等于最大容量
+    if (initialCapacity > MAXIMUM_CAPACITY)
+        initialCapacity = MAXIMUM_CAPACITY;
+    
+    // 负载因子小于0或空,报错
+    if (loadFactor <= 0 || Float.isNaN(loadFactor))
+        throw new IllegalArgumentException("Illegal load factor: " +loadFactor);
+    
+    // 初始化负载因子
+    this.loadFactor = loadFactor;
+    // 初始化阈值,此时阈值为初始化的容量
+    this.threshold = tableSizeFor(initialCapacity);
+}
+
+// 作用：由于容量必须是2的幂次方,返回 大于输入参数且最近的2的整数次幂的数
+static final int tableSizeFor(int cap) {
+    // 让cap-1再赋值给n的目的是另找到的目标值大于或等于原值
+    // 例如cap为8,不减少则找到的是16,减1找到的是8
+    int n = cap - 1;
+    n |= n >>> 1;
+    n |= n >>> 2;
+    n |= n >>> 4;
+    n |= n >>> 8;
+    n |= n >>> 16;
+    // 当n小于0时,指定为1。当n大于2^30,指定为2^30。
+    return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
+}
+
+/**
+* m：指定的map对象
+**/
+public HashMap(Map<? extends K, ? extends V> m) {
+    this.loadFactor = DEFAULT_LOAD_FACTOR;
+    putMapEntries(m, false);
+}
+
+final void putMapEntries(Map<? extends K, ? extends V> m, boolean evict) {
+    // s为map的数组长度
+    int s = m.size();
+    if (s > 0) {
+        // 如果数组为空
+        if (table == null) { 
+            // 阈值 = (容量/负载) + 1
+            float ft = ((float)s / loadFactor) + 1.0F;
+            
+            int t = ((ft < (float)MAXIMUM_CAPACITY) ? (int)ft : MAXIMUM_CAPACITY);
+            
+            // 更新阈值为
+            if (t > threshold)
+                threshold = tableSizeFor(t);
+        }
+        
+        // 如果小于阈值,则扩容
+        else if (s > threshold)
+            resize();
+        
+        // 遍历Map,将该map中的元素插入到map
+        for (Map.Entry<? extends K, ? extends V> e : m.entrySet()) {
+            K key = e.getKey();
+            V value = e.getValue();
+            putVal(hash(key), key, value, false, evict);
+        }
+    }
+}
+```
 
 ### 3.常用方法
 
+- get()方法
+- remove()方法
+- replace()方法
+- containsValue()方法
+
+```java
+/**
+* get()方法：根据key获取value值
+* 1. 查找哈希表的索引,时间复杂度为O(1)
+* 2. 索引处如果是链表,时间复杂度为O(n)
+* 3. 索引处如果是红黑树,时间复杂度为O(log n)
+**/
+public V get(Object key) {
+    Node<K,V> e;
+    // 如果结点e为空则返回null,否则返回value值
+    return (e = getNode(hash(key), key)) == null ? null : e.value;
+}
+
+final Node<K,V> getNode(int hash, Object key) {
+    Node<K,V>[] tab; 
+    Node<K,V> first, e; 
+    int n; 
+    K k;
+    
+    /**
+    * (tab = table) != null：Map当前数组对象不为空
+    * (n = tab.length) > 0：Map当前数组长度大于0
+    * first = tab[(n - 1) & hash]：取模运算得到key的索引,并标记为链表的头结点
+    **/
+    if ((tab = table) != null && (n = tab.length) > 0 
+        	&& (first = tab[(n - 1) & hash]) != null) {
+        
+        /**
+        * 作用：直接返回头结点
+        * first.hash == hash：比较hash值(必须满足)
+        * (k = first.key) == key：比较key对象的内存地址(满足其一即可)
+        * (key != null && key.equals(k))：比较key对象的自定义equal方法(满足其一即可)
+        **/
+        if (first.hash == hash && 
+            	((k = first.key) == key || (key != null && key.equals(k))))
+            return first;
+        
+        // 开始循环链表
+        if ((e = first.next) != null) {
+            // 如果是红黑树,调用树的查找方法
+            if (first instanceof TreeNode)
+                return ((TreeNode<K,V>)first).getTreeNode(hash, key);
+            
+            // 链表查找
+            do {
+                /**
+                * e.hash == hash：比较hash值
+                * ((k = e.key) == key || (key != null && key.equals(k)))):比较内存地址或equal
+                **/
+                if (e.hash == hash &&
+                    ((k = e.key) == key || (key != null && key.equals(k))))
+                    return e;
+            } while ((e = e.next) != null);
+        }
+    }
+    return null;
+}
+
+
+/**
+* remove()方法：根据key值删除一个键值对
+* 时间复杂度和查找的一样
+**/
+public V remove(Object key) {
+    Node<K,V> e;
+    return (e = removeNode(hash(key), key, null, false, true)) == null ? null : e.value;
+}
+
+final Node<K,V> removeNode(int hash, Object key, Object value,boolean matchValue, boolean movable) {
+    // 局部变量
+    Node<K,V>[] tab; 
+    Node<K,V> p; 
+    int n, index;
+    
+    /**
+    * (tab = table) != null：Map当前数组不为空
+    * (n = tab.length) > 0：Map当前数组长度大于0
+    * (p = tab[index = (n - 1) & hash]) != null：取模运算获取索引处元素,且不为空
+    **/
+    if ((tab = table) != null && (n = tab.length) > 0 &&
+        (p = tab[index = (n - 1) & hash]) != null) {
+        
+        Node<K,V> node = null, e; K k; V v;
+        
+        // 如果头结点的key相等,则取出头结点
+        if (p.hash == hash && ((k = p.key) == key || (key != null && key.equals(k))))
+            node = p;
+        
+        // 进入索引处
+        else if ((e = p.next) != null) {
+            
+            // 如果是红黑树,调用树方法获取结点
+            if (p instanceof TreeNode)
+                node = ((TreeNode<K,V>)p).getTreeNode(hash, key);
+            else {
+                
+                // 如果是链表,从头结点找到尾结点
+                do {
+                    if (e.hash == hash && 
+                        	((k = e.key) == key || (key != null && key.equals(k)))) {
+                        node = e;
+                        break;
+                    }
+                    p = e;
+                } while ((e = e.next) != null);
+                
+            }
+        }
+        
+        /**
+        * node表示和key匹配的结点,也就是待删除结点
+        * 
+        **/
+        if (node != null && (!matchValue || (v = node.value) == value ||
+                             (value != null && value.equals(v)))) {
+            // 如果是红黑树,调用树的删除方法
+            if (node instanceof TreeNode)
+                ((TreeNode<K,V>)node).removeTreeNode(this, tab, movable);
+            
+            // 如果是索引处的头结点,用p.next替换掉索引处的p
+            else if (node == p)
+                tab[index] = node.next;
+            
+            // 如果是链表上的元素,用下一位替换
+            else
+                p.next = node.next;
+            
+          
+            ++modCount;
+            --size;
+            afterNodeRemoval(node);
+            return node;
+        }
+    }
+    return null;
+}
+
+/**
+* replace()：要修改的key,旧value值,新value值
+**/
+public boolean replace(K key, V oldValue, V newValue) {
+     Node<K,V> e; V v;
+     // getNode()方法：根据key值获取结点
+     // 只有key值和value值命中,才能更新。
+     if ((e = getNode(hash(key), key)) != null &&
+         ((v = e.value) == oldValue || (v != null && v.equals(oldValue)))) {
+         e.value = newValue;
+         afterNodeAccess(e);
+         return true;
+     }
+     return false;
+ }
+
+/**
+* replace()：要修改的key,新value值
+**/
+public V replace(K key, V value) {
+    Node<K,V> e;
+    // 只要能根据key值找到结点,就直接更新
+    if ((e = getNode(hash(key), key)) != null) {
+        V oldValue = e.value;
+        e.value = value;
+        afterNodeAccess(e);
+        return oldValue;
+    }
+    return null;
+}
+
+/**
+* containsValue():查找map中是否含有value值的键值对
+* 时间复杂度为O(n^2),最好少使用
+**/ 
+public boolean containsValue(Object value) {
+    Node<K,V>[] tab; V v;
+    
+    // 当前map中的数组不为null且大于9
+    if ((tab = table) != null && size > 0) {
+        // 先循环整个数组
+        for (int i = 0; i < tab.length; ++i) {
+            // 在循环数组中的链表或者红黑树
+            for (Node<K,V> e = tab[i]; e != null; e = e.next) {
+                if ((v = e.value) == value ||
+                    (value != null && value.equals(v)))
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
+```
+
 ### 4.获取视图
+
+```java
+// 返回一个Map的视图,对视图的更改会映射到原map中
+public Set<Map.Entry<K,V>> entrySet() {
+    Set<Map.Entry<K,V>> es;
+    return (es = entrySet) == null ? (entrySet = new EntrySet()) : es;
+}
+
+/**
+* 实例：遍历Map
+**/
+public static void main(String[] args){
+    Map<Integer,String> map = new HashMap<>();
+    map.put(1,"北京");
+    map.put(2,"上海");
+    map.put(3,"广州");
+    map.put(4,"深圳");
+
+    for(Map.Entry entry : map.entrySet()) {
+        System.out.println(String.format("key:[%s],value:[%s]",entry.getKey(),entry.getValue()));
+    }
+
+}
+```
 
 
 
