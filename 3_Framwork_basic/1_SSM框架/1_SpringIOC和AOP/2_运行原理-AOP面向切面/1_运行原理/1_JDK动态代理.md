@@ -119,9 +119,9 @@
 
 - 获取代理类的Class对象
 
-  1. Proxy.getProxyClass()，用来返回代理类的Class对象。  只要传入目标类实现的接口的Class对象，getProxyClass()方法即可返回代理Class对象，而不用实际编写代理类。 
-  2.  通过给Proxy.getProxyClass()传入类加载器和接口Class对象 ，得到一个该接口代理类的Class对象。 包含接口的方法信息 ， 又包含了构造器$Proxy0(InvocationHandler)，还有一些特有的方法以及从Object继承的方法。 
-  3. 代理类的Class对象只有一个有参的构造器 com.sun.proxy.$Proxy0(java.lang.reflect.InvocationHandler)，需要一个InvocationHandler实例类，构造生成代理类实例。
+  1. `Proxy.getProxyClass()`，用来返回代理类的`Class`对象。  只要传入目标类实现的接口的`Class`对象，`getProxyClass()`方法即可返回代理Class对象，而不用实际编写代理类。 
+  2.  通过给`Proxy.getProxyClass()`传入类加载器和接口`Class`对象 ，得到一个该接口代理类的Class对象。 包含接口的方法信息 ， 又包含构造器`$Proxy0(InvocationHandler)`，还有一些特有的方法以及从`Object`继承的方法。 
+  3. 代理类的Class对象只有一个有参的构造器 `com.sun.proxy.$Proxy0(java.lang.reflect.InvocationHandler)`，需要一个`InvocationHandler`实例类，构造生成代理类实例。
 
   ```java
   /**
@@ -410,7 +410,7 @@ public class ProxyTest {
       // 目标对象
       private Object target;
   
-      // 实现拦截方法
+      // 实现拦截方法-回调函数
       public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy)
           throws Throwable {
           System.out.println("Cglib动态代理，监听开始！");

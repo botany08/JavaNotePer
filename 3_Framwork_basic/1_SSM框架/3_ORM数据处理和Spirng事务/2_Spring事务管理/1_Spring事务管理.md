@@ -289,6 +289,10 @@ public class PrototypeTransactionlnterceptor implements Methodinterceptor {
 
   `Spring`提供了一个事务同步器类，`TransactionSynchronization`，用于事务同步回调的接口。
 
+
+
+TreadLocal线程局部变量的使用--待整理
+
  https://cloud.tencent.com/developer/article/1497685 
 
 
