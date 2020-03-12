@@ -120,7 +120,87 @@ public class AsyncService {
 
 #### 1.4异步回调-判断异步方法结束
 
-```
+```java
+package com.tcl.joker.productboot.service;
+
+import com.tcl.joker.productboot.dao.SkuQueryDao;
+import com.tcl.joker.productboot.model.CarVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.concurrent.Future;
+
+
+/**
+ * 类 <code>{类名称}</code>{此类功能描述}
+ *
+ * @author zangbao.lin
+ * @version 2020/3/11
+ * @since JDK 1.8
+ */
+@Service
+public class AsyncService {
+
+    @Autowired
+    private SkuQueryDao skuQueryDao;
+
+    @Async
+    public void taskA() {
+        try {
+            Thread.sleep(2000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("执行任务A--用时2s");
+    }
+
+
+    @Async
+    public Future<List<CarVO>> taskB() {
+        try {
+            Thread.sleep(3000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("执行任务B--用时3s");
+
+        List<CarVO> carVOList = skuQueryDao.querySkuById(1);
+        return new AsyncResult<>(carVOList);
+    }
+
+    @Async
+    public Future<List<CarVO>> taskC() {
+        try {
+            Thread.sleep(4000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("执行任务C--用时3s");
+
+        List<CarVO> carVOList = skuQueryDao.querySkuById(2);
+        return new AsyncResult<>(carVOList);
+
+    }
+
+    @Async
+    public Future<List<CarVO>> taskD() {
+        try {
+            Thread.sleep(4000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("执行任务D--用时4s");
+
+        List<CarVO> carVOList = skuQueryDao.querySkuById(3);
+        return new AsyncResult<>(carVOList);
+
+    }
+
+
+}
 
 ```
 
