@@ -1,0 +1,1 @@
+ http://blog.leapoahead.com/2015/09/06/understanding-jwt/ 

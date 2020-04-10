@@ -87,7 +87,7 @@
      ```
   4. log_bin设置二进制日志所产生文件的基本名称，二进制日志由一系列文件组成。log_bin的值是可选项，如果没有为log_bin设置值，则默认值是：主机名-bin。如果随便修改主机名，则binlog日志的名称也会被改变的。
   5. server-id是用来唯一标识一个服务器的，每个服务器的server-id都不一样。
-6. 这样slave连接到master后，会请求master将所有的binlog传递给它，然后将这些binlog在slave上回放。为了防止权限混乱，一般都是建立一个单独用于复制的账户。
+  6. 这样slave连接到master后，会请求master将所有的binlog传递给它，然后将这些binlog在slave上回放。为了防止权限混乱，一般都是建立一个单独用于复制的账户。
   
 - **基于语句的复制**
   
@@ -145,6 +145,9 @@
      End_log_pos: 316
             Info: grant replication slave on *.* to rep identified by '123456'
      3 rows in set (0.00 sec)
+     ```
+   ```
+  
    ```
   
 - 具体实例
