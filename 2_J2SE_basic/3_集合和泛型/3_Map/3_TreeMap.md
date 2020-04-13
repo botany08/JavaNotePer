@@ -2,20 +2,20 @@
 
 ### 1.定义及特点
 
-- 在TreeMap中,键值对之间有序排列,TreeMap的实现基础是排序二叉树(红黑树)。
-- TreeMap实现了Map,SortedMap和NavigableMap接口。可以方便的根据键的顺序进行查找，如第一个、最后一个、某一范围的键、邻近键等。
-- 为了按键有序，TreeMap要求键实现Comparable接口或通过构造方法提供一个Comparator对象。
-- TreeMap使用键的比较结果对键进行排重。
+- 在`TreeMap`中,键值对之间有序排列,`TreeMap`的实现基础是**排序二叉树(红黑树)**。
+- `TreeMap`实现了`Map,SortedMap`和`NavigableMap`接口。可以方便的根据键的顺序进行查找，如第一个、最后一个、某一范围的键、邻近键等。
+- 为了按键有序，`TreeMap`要求键实现`Comparable`接口或通过构造方法提供一个`Comparator`对象。
+- `TreeMap`使用键的比较结果对键进行排重。
 
 ###2.性能及时间复杂度
 
-- put()，get()及remove()方法的时间复杂度为O(h) , h为树的高度。在树平衡的情况下,h为log2(N),N为节点数。
-- 不要求排序，优先考虑HashMap。要求排序，再考虑TreeMap。
+- `put()，get()`及`remove()`方法的时间复杂度为`O(h)` , h为树的高度。在树平衡的情况下,h为log2(N),N为节点数。
+- 不要求排序，优先考虑`HashMap`。要求排序，再考虑`TreeMap`。
 
 ### 3.构造方法
 
-- 构造参数如果有比较器对象comparator,不要求键实现Comparable接口。
-- 如果没有,则要求键实现Comparable接口,且重写compareTo方法。
+- 构造参数如果有比较器对象`comparator`,不要求键实现`Comparable`接口。
+- 如果没有,则要求键实现`Comparable`接口,且重写`compareTo`方法。
 
 ```java
 /**
@@ -60,8 +60,8 @@ public TreeMap(SortedMap<K, ? extends V> m) {
 
 ### 4.接口Comparable和Comparator区别  
 
-- Comparable位于java.langl包里，绝大多数的类实现了这个接口，比较方法是compareTo。称为内比较器，可以和自身比较。
-- Comparator位于java.util包里，实现Compare接口一般是没有实现Comparable接口或者对compareTo方法不满意，只需要重写compare方法即可。一般称为外比较器。
+- `Comparable`位于`java.lang`包里，绝大多数的类实现了这个接口，比较方法是compareTo。称为内比较器，可以和自身比较。
+- `Comparator`位于`java.util`包里，实现Compare接口一般是没有实现Comparable接口或者对compareTo方法不满意，只需要重写compare方法即可。一般称为外比较器。
 
 ### 5.比较器对象实例
 

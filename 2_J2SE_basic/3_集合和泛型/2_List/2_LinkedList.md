@@ -2,34 +2,34 @@
 
 ### 1.基础概念
 
-- LinkedList同时实现了List接口和Deque接口，可以作为顺序容器(List)，队列(Queue)或者栈(Stack)使用。
-- 需要使用栈或者队列时，可以使用LinkedList。因为Java官方已经声明不建议使用Stack类，另一方面Java里根本没有一个叫做Queue的类(Queue是接口)。
-- 关于栈或队列，现在的首选是ArrayDeque，有着比LinkedList(当作栈或队列使用时)有着更好的性能。
+- `LinkedList`同时实现了`List`接口和`Deque`接口，可以作为顺序容器(`List`)，队列(`Queue`)或者栈(`Stack`)使用。
+- 需要使用栈或者队列时，可以使用`LinkedList`。因为Java官方已经声明不建议使用Stack类，另一方面Java里根本没有一个叫做`Queue`的类(`Queue`是接口)。
+- 关于栈或队列，现在的首选是`ArrayDeque`，有着比`LinkedList`(当作栈或队列使用时)有着更好的性能。
 
 ### 2.特点以及时间复杂度
 
-- LinkedList内部是用双向链表实现的，维护了长度、头节点和尾节点。
+- `LinkedList`内部是**基于双向链表**实现的，维护了长度、头节点和尾节点。
 
 - 适用场景：列表长度未知，添加、删除操作比较多，经常从两端进行操作，而按照索引位置访问相对比较少
 
-- 为追求效率LinkedList没有实现同步(synchronized)，如果需要多个线程并发访问，可以先采用Collections.synchronizedList()方法对其进行包装。  
+- 为追求效率`LinkedList`没有实现同步(`synchronized`)，如果需要多个线程并发访问，可以先采用`Collections.synchronizedList()`方法对其进行包装。  
 
 - 增删改查的时间复杂度
 
-  | 方法                                | 作用                                 | 时间复杂度 |
-  | ----------------------------------- | ------------------------------------ | ---------- |
-  | get(int index)                      | 根据索引查询元素,二分法查找,需要遍历 | O(n/2)     |
-  | contains(Object o)                  | 根据内容查找元素,需要遍历            | O(n)       |
-  | add(E e)/addLast(E e)/addFirst(E e) | 添加元素到头部或尾部                 | O(1)       |
-  | add(int index, E element)           | 添加元素到指定索引位置,需要遍历      | O(n)       |
-  | remove()/removeFirst()/removeLast() | 从头部或尾部删除元素                 | O(1)       |
-  | remove(int index)/remove(Object o)  | 删除指定索引或内容的元素             | O(n)       |
+  | 方法                                  | 作用                                 | 时间复杂度 |
+  | ------------------------------------- | ------------------------------------ | ---------- |
+  | `get(int index)`                      | 根据索引查询元素,二分法查找,需要遍历 | O(n/2)     |
+  | `contains(Object o)`                  | 根据内容查找元素,需要遍历            | O(n)       |
+  | `add(E e)/addLast(E e)/addFirst(E e)` | 添加元素到头部或尾部                 | O(1)       |
+  | `add(int index, E element)`           | 添加元素到指定索引位置,需要遍历      | O(n)       |
+  | `remove()/removeFirst()/removeLast()` | 从头部或尾部删除元素                 | O(1)       |
+  | `remove(int index)/remove(Object o)`  | 删除指定索引或内容的元素             | O(n)       |
 
 ### 3.实现原理
 
-- 底层通过双向链表实现, 是双向链表不是双向循环链表。
+- 底层通过双向链表实现, 是双向链表**不是双向循环链表**。
 - 难点主要是插入和删除元素时双向链表的维护过程，双向链表的每个节点用内部类Node表示。
-- LinkedList通过first和last引用分别指向链表的第一个和最后一个元素。当链表为空的时候first和last都指向null。 
+- `LinkedList`通过`first`和`last`引用分别指向链表的第一个和最后一个元素。当链表为空的时候`first`和`last`都指向`null`。 
 
 ![](https://javanote.oss-cn-shenzhen.aliyuncs.com/LinkedList底层实现.png)
 

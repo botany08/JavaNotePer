@@ -2,19 +2,19 @@
 
 ### 1.基本介绍
 
-- LinkedHashMap是HashMap的子类。同时内部还有一个双向链表维护键值对的顺序，每个键值对既位于哈希表中，也位于这个双向链表中。
-- LinkedHashMap支持两种顺序，一种是插入顺序，另外一种是访问顺序。
+- `LinkedHashMap`是`HashMap`的子类。同时内部还有一个双向链表维护键值对的顺序，每个键值对既位于哈希表中，也位于这个双向链表中。
+- `LinkedHashMap`支持两种顺序，一种是插入顺序，另外一种是访问顺序。
   1. 插入顺序：先添加的在前面，后添加的在后面，修改操作不影响顺序。(先进先出,类似于队列)
-  2. 访问顺序：所谓访问是指get/put操作，对一个键执行get/put操作后，其对应的键值对会移到链表末尾。最末尾的就是最近访问的，最开始的是最久没被访问的。 
-- 在链表中的顺序默认是插入顺序，也可以配置为访问顺序。LinkedHashMap及其节点类LinkedHashMap.Entry重写了若干方法以维护这种关系。
+  2. 访问顺序：所谓访问是指`get/put`操作，对一个键执行get/put操作后，其对应的键值对会移到链表末尾。最末尾的就是最近访问的，最开始的是最久没被访问的。 
+- 在链表中的顺序默认是插入顺序，也可以配置为访问顺序。`LinkedHashMap`及其节点类`LinkedHashMap.Entry`重写了若干方法以维护这种关系。
 
 ### 2.实现原理
 
 <img src="https://javanote.oss-cn-shenzhen.aliyuncs.com/12_LinkedHashMap原理图.png" style="zoom: 80%;" />
 
-- LikedHashMap其结构在HashMap结构上增加了链表结构。每一个bucket组成一个双链表,再将多个bucket链接起来,最后整个map成为一个双链表。数据结构为(数组+单链表+红黑树+双链表)
+- `LikedHashMap`其结构在`HashMap`结构上增加了链表结构。每一个bucket组成一个双链表,再将多个bucket链接起来,最后整个map成为一个双链表。数据结构为(**数组+单链表+红黑树+双链表**)
 - Map接口的实现类都有一个对应的Set接口的实现类，比如HashMap有HashSet，TreeMap有TreeSet。
-- LinkedHashMap也有一个对应的Set接口的实现类LinkedHashSet。LinkedHashSet是HashSet的子类，内部Map的实现类是LinkedHashMap，可以保持插入顺序。
+- `LinkedHashMap`也有一个对应的Set接口的实现类LinkedHashSet。LinkedHashSet是HashSet的子类，内部Map的实现类是LinkedHashMap，可以保持插入顺序。
 
 ### 3.基本用法
 

@@ -4,39 +4,39 @@
 
 - ArrayList实现了List接口，元素存放和添加的顺序是一致的。
 - 允许放入null元素，允许放入重复的元素。
-- 没有实现同步，是非线程安全，其他方面和Vector相同。
+- 没有实现同步，是**非线程安全**，其他方面和Vector相同。
 
 ### 2.特点以及效率
 
-- 顺序存储,数据可重复,内部采用动态数组实现 。
+- 顺序存储，数据可重复，内部**基于动态数组**实现 。
 
 - 增删改查时间复杂度
   
-  | 方法                      | 作用                                | 时间复杂度 |
-  | ------------------------- | ----------------------------------- | ---------- |
-  | get(int index)            | 根据索引查找元素,数组访问           | O(1)       |
-  | contains(Object o)        | 根据元素内容查询元素,需要遍历       | O(n)       |
-  | add(E e)                  | 添加元素到末尾,数组添加             | O(1)       |
-  | add(int index, E element) | 添加元素到指定位置,需要移动元素     | O(n)       |
-  | remove(int index)         | 删除指定索引位置的元素,需要移动元素 | O(n)       |
-  | remove(Object o)          | 删除指定对象的元素,需要移动元素     | O(n)       |
-  | set(int index, E element) | 修改指定位置的元素值                | O(1)       |
+  | 方法                        | 作用                                | 时间复杂度 |
+  | --------------------------- | ----------------------------------- | ---------- |
+  | `get(int index)`            | 根据索引查找元素,数组访问           | O(1)       |
+  | `contains(Object o)`        | 根据元素内容查询元素,需要遍历       | O(n)       |
+  | `add(E e)`                  | 添加元素到末尾,数组添加             | O(1)       |
+  | `add(int index, E element)` | 添加元素到指定位置,需要移动元素     | O(n)       |
+  | `remove(int index)`         | 删除指定索引位置的元素,需要移动元素 | O(n)       |
+  | `remove(Object o)`          | 删除指定对象的元素,需要移动元素     | O(n)       |
+  | `set(int index, E element)` | 修改指定位置的元素值                | O(1)       |
 
 ###3.底层实现原理
 
-- 底层通过动态数组实现
+- **底层通过动态数组实现**
   1. ArrayList的当前元素个数称为size。
-  2. ArrayList的容量称为capacity，表示底层数组的实际大小，容器内存储元素的个数不能多于当前容量。
-  3. 当向容器中添加元素时，size会增加。如果容量capacity不足，容器会自动增大底层数组的大小。
+  2. ArrayList的容量称为`capacity`，表示底层数组的实际大小，容器内存储元素的个数不能多于当前容量。
+  3. 当向容器中添加元素时，`size`会增加。如果容量`capacity`不足，容器会自动增大底层数组的大小。
 
 ![](https://javanote.oss-cn-shenzhen.aliyuncs.com/ArrayList底层实现.png)
 
 ### 4.常用方法时间开销
 
 - add()方法的时间开销跟插入位置有关。
-- addAll()方法的时间开销跟添加元素的个数成正比。其余方法大都是线性时间。
-- size(), isEmpty(), get(), set()方法均能在常数时间内完成。
-- 为追求效率，ArrayList没有实现同步，如果需要多个线程并发访问，用户可以手动同步，也可使用Vector替代。
+- addAll()方法的时间开销跟添加元素的个数成正比。其余方法大都是线性时间O(n)。
+- `size()`, `isEmpty()`, `get()`, `set()`方法均能在常数时间内完成O(1)。
+- 为追求效率，`ArrayList`没有实现同步，如果需要多个线程并发访问，用户可以手动同步，也可使用Vector替代。
 
 ### 5.ArrayList动态数组扩容详解
 
@@ -60,15 +60,14 @@ private static final int MAX_ARRAY_SIZE = 2147483639;
 
 ####5.2自动改变数组长度的原理
 
-- ArrayList类的实质
-
-  ArrayList底层采用Object类型的数组实现，当使用不带参数的构造方法生成ArrayList对象时，实际上会在底层生成一个长度为10的Object类型数组。
+- **ArrayList类的实质**
+1. `ArrayList`底层采用`Object`类型的数组实现。
+  2. 当使用不带参数的构造方法生成`ArrayList`对象时，实际上会在底层生成一个长度为10的`Object`类型数组。
 
 ```java
 /**
 * 初始化步骤
-* 1. ArrayList定义了一个私有的未被序列化的Object数组elementData，用来存储ArrayList的对象列表(注意只定义未初
-*    始)
+* 1. ArrayList定义了一个私有的未被序列化的Object数组elementData，用来存储ArrayList的对象列表(只定义未初始化)
 * 2. 以指定初始容量(Capacity)或把指定的Collection转换为引用型数组后实例化elementData数组。
 * 3. 如果没有指定，则预置初始容量为10进行实例化。
 * 4. 把私有数组预先实例化，然后通过copyOf方法覆盖原数组，是实现自动改变ArrayList的大小(size)的关键。
@@ -104,7 +103,7 @@ public ArrayList() {
 // 构造方法3 - 参数为数组
 public ArrayList(Collection<? extends E> c) {
     // 用Collection类初始化elementData数组
-    // toArray()方法 转化出来的数组是复制了原数据的一个副本而不只是原数据的一个引用
+    // toArray()方法 转化出来的数组是复制了原数据的一个副本而不只是原数据的一个引用,深拷贝
     elementData = c.toArray();
     
     if ((size = elementData.length) != 0) {
@@ -122,12 +121,12 @@ public ArrayList(Collection<? extends E> c) {
 }
 ```
 
-- ArrayList自动改变size的机制
+- **ArrayList自动改变size的机制**
 
-  1. 为了实现这一机制，java引进了Capacity和size概念，以区别数组的length。为了保证用户增加新的列表对象,Java设置了最小容量(minCapacity)。
-  2. 通常情况大于列表对象的数目,所以Capactiy虽然是底层数组的长度(length),但是对于用户来讲,它是无意义的。
-  3. 而size存储着列表对象的数量,才是用户所需要的。为了防止用户错误修改,这一属性被设置为private的,不过可以通过size()获取。
-  4. Capacity初始值(initialCapacity)可以由用户直接指定或由用户指定的Collection集合存储的对象数目确定。而size的被声明为int型变量,默认为0,当用户指定Collection创建ArrayList时,size值等于initialCapacity。
+  1. 为了实现这一机制，引进了`Capacity`和`size`概念，以区别数组的`length`。为了保证用户增加新的列表对象，`Java`设置了最小容量(`minCapacity`)。
+  2. 通常情况大于列表对象的数目,所以`Capactiy`虽然是底层数组的长度(`length`),但是对于用户来讲,它是无意义的。
+  3. 而`size`存储着列表对象的数量，才是用户所需要的。为了防止用户错误修改，这一属性被设置为`private`的，只能通过size()获取。
+  4. `Capacity`初始值(`initialCapacity`)可以由用户直接指定，或由用户指定的Collection集合存储的对象数目确定。而size的被声明为int型变量，默认为0，当用户指定`Collection`创建`ArrayList`时，`size`值等于`initialCapacity`。
 
   ```java
   /**
@@ -148,6 +147,7 @@ public ArrayList(Collection<? extends E> c) {
       ensureExplicitCapacity(calculateCapacity(elementData, minCapacity));
   }
   
+  // 计算此次插入元素所需的最小容量
   private static int calculateCapacity(Object[] elementData, int minCapacity) {
       if (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) {
           // private static final int DEFAULT_CAPACITY = 10;
@@ -157,6 +157,7 @@ public ArrayList(Collection<? extends E> c) {
       return minCapacity;
   }
   
+  // 调整底层数组容量
   private void ensureExplicitCapacity(int minCapacity) {
       // protected transient int modCount = 0;  修改次数增加1
       modCount++;
@@ -202,16 +203,16 @@ public ArrayList(Collection<? extends E> c) {
   }
   
   /**
-  * 总结：底层数组容量调整思路 （初始化情形）
+  * 总结：底层数组容量调整思路(初始化情形)
   * 1. 添加元素时,计算添加后数组的最小容量. (当前容量为0,最小默认容量为10)
-  * 2. 当最小容量 大于 当前数组容量, 扩充底层数组容量. 
-  * 3. 计算扩充后容量 oldCapacity+(oldCapacity/2). (扩充后容量为0)
+  * 2. 当最小容量 大于 当前数组容量, 扩充底层数组容量. (如果最小容量小于10,则设置为10)
+  * 3. 计算扩充后容量 oldCapacity+(oldCapacity/2). (扩充后容量为0,最小容量为10)
   * 4. 如果扩充后的容量 小于 最小容量, 则扩充后的容量修改为最小容量,否则为扩充后容量.(扩充后容量0修改为10)
   * 5. 计算扩充后容量最大值溢出问题.(10 小于 MAX_ARRAY_SIZE)
   * 6. Arrays.copyOf()方法将旧有数组,复制到扩充容量后的数组. (将当前数组复制到容量为10的数组,元素不变)
-  **/
+**/
   ```
-
+  
   ```java
   /**
   * remove()方法 - 删除元素
@@ -259,7 +260,7 @@ public ArrayList(Collection<? extends E> c) {
 
 ####5.3数组扩容的核心方法
 
--  System.arraycopy数组的拷贝
+-  **System.arraycopy数组的拷贝**
 
   ```java
   /**
