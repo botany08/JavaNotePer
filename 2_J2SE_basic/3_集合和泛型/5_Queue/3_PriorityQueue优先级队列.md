@@ -1,10 +1,10 @@
 ## 基本概念
 
-### 1. PriorityQueue 定义
+### 1.PriorityQueue 定义
 
-- PriorityQueue是优先级队列，首先实现了队列接口(Queue)，与LinkedList类似。
+- `PriorityQueue`是优先级队列，首先实现了队列接口(`Queue`)，与LinkedList类似。
 - 队列长度没有限制，与一般队列的区别是有优先级的概念。每个元素都有优先级，队头永远都是优先级最高的。
-- PriorityQueue内部算法是用堆实现的，基础数据存在对象数组中。
+- `PriorityQueue`**内部算法是用堆实现的**，**基础数据存在对象数组中**。
 - 默认为最小堆，可以修改比较器方法变成最大堆。
 
 ### 2.Queue接口

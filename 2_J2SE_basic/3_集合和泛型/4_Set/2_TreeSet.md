@@ -2,11 +2,11 @@
 
 ### 1.TreeSet定义及特点
 
-- TreeSet是有序的，与HashSet和HashMap的关系一样，TreeSet是基于TreeMap的。
+- `TreeSet`是有序的，与`HashSet`和`HashMap`的关系一样，`TreeSet`是基于`TreeMap`的。
 - 没有重复元素。
-- 添加、删除元素、判断元素是否存在，时间复杂度和TreeMap一样，为O(log2(N))，N为元素个数。
-- 有序，TreeSet同样实现了SortedSet和NavigatableSet接口，可以方便的根据顺序进行查找和操作，如第一个、最后一个、某一取值范围、某一值的邻近元素等。
-- 为了有序，TreeSet要求元素实现Comparable接口或通过构造方法提供一个Comparator对象。
+- 添加、删除元素、判断元素是否存在，时间复杂度和`TreeMap`一样，为O(log2(N))，N为元素个数。
+- 有序，TreeSet同样实现了`SortedSet`和`NavigatableSet`接口，可以方便的根据顺序进行查找和操作，如第一个、最后一个、某一取值范围、某一值的邻近元素等。
+- 为了有序，`TreeSet`要求元素实现`Comparable`接口或通过构造方法提供一个`Comparator`对象。
 
 ### 2.构造方法
 
