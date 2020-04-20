@@ -61,16 +61,16 @@ private static final int MAX_ARRAY_SIZE = 2147483639;
 ####5.2自动改变数组长度的原理
 
 - **ArrayList类的实质**
-1. `ArrayList`底层采用`Object`类型的数组实现。
+  1. `ArrayList`底层采用`Object`类型的数组实现。
   2. 当使用不带参数的构造方法生成`ArrayList`对象时，实际上会在底层生成一个长度为10的`Object`类型数组。
 
 ```java
 /**
 * 初始化步骤
-* 1. ArrayList定义了一个私有的未被序列化的Object数组elementData，用来存储ArrayList的对象列表(只定义未初始化)
+* 1. ArrayList定义了一个私有的未被序列化的Object数组elementData,用来存储ArrayList的对象列表(只定义未初始化)
 * 2. 以指定初始容量(Capacity)或把指定的Collection转换为引用型数组后实例化elementData数组。
-* 3. 如果没有指定，则预置初始容量为10进行实例化。
-* 4. 把私有数组预先实例化，然后通过copyOf方法覆盖原数组，是实现自动改变ArrayList的大小(size)的关键。
+* 3. 如果没有指定,则预置初始容量为10进行实例化。
+* 4. 把私有数组预先实例化,然后通过copyOf方法覆盖原数组,是实现自动改变ArrayList的大小(size)的关键。
 **/
 private  transient  Object[]  elementData;
 
@@ -125,7 +125,7 @@ public ArrayList(Collection<? extends E> c) {
 
   1. 为了实现这一机制，引进了`Capacity`和`size`概念，以区别数组的`length`。为了保证用户增加新的列表对象，`Java`设置了最小容量(`minCapacity`)。
   2. 通常情况大于列表对象的数目,所以`Capactiy`虽然是底层数组的长度(`length`),但是对于用户来讲,它是无意义的。
-  3. 而`size`存储着列表对象的数量，才是用户所需要的。为了防止用户错误修改，这一属性被设置为`private`的，只能通过size()获取。
+  3. 而`size`存储着列表对象的数量，才是用户所需要的。为了防止用户错误修改，这一属性被设置为`private`的，只能通过size()获取。 
   4. `Capacity`初始值(`initialCapacity`)可以由用户直接指定，或由用户指定的Collection集合存储的对象数目确定。而size的被声明为int型变量，默认为0，当用户指定`Collection`创建`ArrayList`时，`size`值等于`initialCapacity`。
 
   ```java
