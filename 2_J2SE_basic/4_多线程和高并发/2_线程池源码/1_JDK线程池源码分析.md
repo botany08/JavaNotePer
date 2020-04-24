@@ -35,7 +35,7 @@
 - **ThreadPoolExecutor**
   1. ThreadPoolExecutor实现了AbstractExecutorService接口，也是一 ExecutorService。
   2. 使用可能的几个池线程之一执行每个提交的任务，通常使用Executors工厂方法配置。 
-  3. 线程池可以解决两个不同问题
+  3. **线程池可以解决两个不同问题**
      - 由于减少了每个任务调用的开销，通常可以在执行大量异步任务时提供增强的性能。
      - 还可以提供绑定和管理资源(包括执行任务集时使用的线程)的方法。
      - 每个ThreadPoolExecutor还维护着一些基本的统计数据，如完成的任务数。
@@ -368,7 +368,7 @@ public ThreadPoolExecutor(int corePoolSize,
 
 - 当在客户端调用`submit`时，之后会间接调用到`execute`函数，其在将来某个时间执行给定任务，此方法中并不会直接运行给定的任务。 
 - **核心线程数`corePoolSize`**
-  1. 如果运行的线程少于`corePoolSize`，则创建新线程来处理请求，即使其他辅助线程是空闲的。 
+  1. **如果运行的线程少于`corePoolSize`，则创建新线程来处理请求**，即使其他辅助线程是空闲的。 
 - **阻塞队列大小`maxPoolSzie`** 
   1. 如果运行的线程多于`corePoolSize`而少于`maximumPoolSize`，则仅当阻塞队列满时才创建新线程。
   2. 如果设置的`corePoolSize`和`maximumPoolSize`相同，相当于创建了固定大小的线程池。 
@@ -458,8 +458,8 @@ public void execute(Runnable command) {
 - 执行流程
   1. 原子性的增加`workerCount`.
   2. 将用户给定的任务封装成为一个`worker`,并将此`worker`添加进`workers`集合中.
-  3. 启动worker对应的线程,并启动该线程,运行`worker`的run方法.
-  4. 回滚worker的创建动作,即将`worker`从`workers`集合中删除,并原子性的减少`workerCount`.
+  3. 启动`worker`对应的线程,并启动该线程,运行`worker`的run方法.
+  4. 回滚`worker`的创建动作,即将`worker`从`workers`集合中删除,并原子性的减少`workerCount`.
 
 ```java
 /**
@@ -627,8 +627,15 @@ private void addWorkerFailed(Worker w) {
   2. 如果线程池正在停止，则中断线程。否则调用3。
   3. 调用`task.run()`执行任务。
   4. 如果`task`为`null`则跳出循环，执行`processWorkerExit()`方法，销毁线程`workers.remove(w)`。
-- **在执行任务的时候对每个工作线程都加锁**的原因
-  1.  `shutdown`方法与`getTask`方法存在竞态条件。
+- **Worker执行任务上锁的原因**
+  1. `Worker`继承了`AbstractQueuedSynchronizer`抽象类，来简化在执行任务时的获取、释放锁。
+  2. 用`AQS`锁来控制中断，当运行时上锁，就不能中断，`TreadPoolExecutor`的`shutdown()`方法中断前都要获取`worker`锁。
+  3. 只有在等待从`workQueue`中获取任务`getTask()`时才能中断，此时没有上锁。
+  4. 但是`Worker`执行前，也会先判断中断标志。
+- **Worker实现的是不可重入锁原因**
+  1. 不想让`Worker`在执行任务时，在调用本身线程池实例，比如`setCorePoolSize()`这种线程池控制方法时可以再次获取锁(重入)。
+  2. `ThreadPoolExecutor.setCorePoolSize()`时可能会`interruptIdleWorkers()`，在对一个线程`interrupt`时会要`w.tryLock()`。
+  3. 防止`Worker`执行时，自己中断自己。
 
 ```java
 final void runWorker(Worker w) {
@@ -699,10 +706,12 @@ final void runWorker(Worker w) {
 
 #### 7.2getTask()函数
 
-- 作用
+- **作用**
   1. 于从`workerQueue`阻塞队列中获取`Runnable`对象。
   2. 于是阻塞队列，所以支持有限时间等待(`poll`)和无限时间等待(`take`)。
   3. 该函数中还会响应`shutDown`和`shutDownNow`函数的操作，若检测到线程池处于`SHUTDOWN`或`STOP`状态，则会返回null，而不再返回阻塞队列中的`Runnalbe`对象。
+- **中断线程**
+  1. 在`getTask()`函数中，从阻塞队列中获取下一个任务。如果当前线程超过了核心线程，就会有超时控制。一旦超时，工作线程就会尝试中断
 
 ```java
 private Runnable getTask() {
