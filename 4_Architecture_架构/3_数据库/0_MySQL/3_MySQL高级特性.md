@@ -111,30 +111,31 @@
   1. 作用是指定新的MySQL分隔符
   2. `DELIMITER //`   将分隔符；替换为//
 3. `DELIMITER ;`    将分隔符// 替换为；
-  
+
 - **存储过程的创建**
   
   1. 简略格式
   `CREATE PROCEDURE 存储过程名称 ([ [IN|OUT|INOUT] 参数名 数据类型  [,[IN|OUT|INOUT] 参数名 数据类型…] ]) [特性 ...] (BEGIN)过程体(END)`
   2. 具体格式
-    `DELIMITER //`
-    `CREATE PROCEDURE selsing(IN sno INT)`
-    `BEGIN` 
+      `DELIMITER //`
+      `CREATE PROCEDURE selsing(IN sno INT)`
+      `BEGIN` 
+  
     		`SELECT id , city` 
     		`FROM student`
     		`WHERE id = sno;`
     `END//`
     `DELIMITER;`
   3. 参数说明
-    存储过程根据需要可能会有输入、输出、输入输出参数，如果有多个参数用","分割开。
-    MySQL存储过程的参数用在存储过程的定义，共有三种参数类型,IN,OUT,INOUT:
-    IN参数的值必须在调用存储过程时指定，在存储过程中修改该参数的值不能被返回，为默认值 
-    OUT:该值可在存储过程内部被改变，并可返回
-    INOUT:调用时指定，并且可被改变和返回
+      存储过程根据需要可能会有输入、输出、输入输出参数，如果有多个参数用","分割开。
+      MySQL存储过程的参数用在存储过程的定义，共有三种参数类型,IN,OUT,INOUT:
+      IN参数的值必须在调用存储过程时指定，在存储过程中修改该参数的值不能被返回，为默认值 
+      OUT:该值可在存储过程内部被改变，并可返回
+      INOUT:调用时指定，并且可被改变和返回
   
   - 调用存储过程
   1. 具体格式
-    
+  
     ```sql
     -- 调用,@变量名称 用户变量
     SET @p_inout=1;  #
@@ -567,7 +568,8 @@ call StatisticStore();
 #### 5.6原子性、稳定性和持久性实现原理
 
 - 原子性、稳定性和持久性是通过redo和undo日志文件实现的，不管是redo还是undo文件都会有一个缓存，称之为redo_buf和undo_buf。同样，数据库文件也会有缓存称之为data_buf。
-#####5.6.1undo日志文件
+
+  ##### 5.6.1undo日志文件
 - undo记录了数据在事务开始之前的值，当事务执行失败或者ROLLBACK时可以通过undo记录的值来恢复数据。例如AA和BB的初始值分别为3，5。
 - 具体步骤
   1. 事务开始
@@ -584,7 +586,8 @@ call StatisticStore();
   3. 数据在任务提交之前写到磁盘保证了持久性。
   4. 但是单纯使用undo保证原子性和持久性需要在事务提交之前将数据写到磁盘，浪费大量I/O。
 
-#####5.6.2redo/undo日志文件
+##### 5.6.2redo/undo日志文件
+
 - 引入redo日志记录数据修改后的值，可以避免数据在事务提交之前必须写入到磁盘的需求，减少I/O。
 - 具体步骤
   1. 事务开始
@@ -606,13 +609,13 @@ call StatisticStore();
   1. 当一个成功的事务完成后，发出COMMIT命令应使所有参与表的更改才会生效。
   2. 如果发生故障时，应发出一个ROLLBACK命令返回的事务中引用的每一个表到以前的状态。
 3. 可以控制的事务行为称为AUTOCOMMIT设置会话变量。如果AUTOCOMMIT设置为1（默认值），然后每一个SQL语句（在事务与否）被认为是一个完整的事务，并承诺在默认情况下，当它完成。 AUTOCOMMIT设置为0时，发出SET AUTOCOMMIT =0命令，在随后的一系列语句的作用就像一个事务，直到一个明确的COMMIT语句时，没有活动的提交。
-  
+
 - **关键字SAVEPOINT -- 设置回滚点**
   
   1. SAVEPOINT adqoo_1
   2. ROLLBACK TO SAVEPOINT adqoo_1
 3. 发生在回滚点adqoo_1之前的事务被提交，之后的事务没有生效。
-  
+
 - **关键字RELEASE SAVEPOINT  -- 删除回滚点**
   删除一个事务的保存点，当没有一个保存点执行这语句时，会抛出一个异常。
 
